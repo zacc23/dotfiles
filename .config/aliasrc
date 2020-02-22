@@ -1,0 +1,77 @@
+alias am=alsamixer
+
+alias bc='bc ~/.bcrc -l -q'
+
+alias btc=bluetoothctl
+
+alias cemu='~/git/CEmu/gui/qt/CEmu'
+
+alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
+alias doas='doas -- '
+
+alias dt='dict -d wn'
+
+alias fp='ffplay -hide_banner'
+
+alias gimp='gimp -s'
+
+alias hc=HeadsetControl
+
+alias ls='ls --color=auto'
+
+alias la='ls -a'
+
+alias lst='ls -t | head'
+
+alias fw='httpdirfs "https://open.audio" ~/.local/music'
+
+alias mci='make clean install'
+
+alias mls='mpv "$(ls --color=never -t | sed q)"'
+
+alias mp=mupdf-x11
+
+alias mpa='mpv --no-video'
+
+alias nf=neofetch
+
+alias pm=pulsemixer
+
+alias sl='streamlink -v'
+
+alias spc=speedtest-cli
+
+alias sx=startx
+
+alias tdd='dict -d devil'
+
+alias th='dict -d moby-thesaurus'
+
+alias tmux='tmux -2'
+
+alias tn=twitchnotifier
+
+alias vi=vim
+
+alias vis=cli-visualizer
+
+alias wf='curl https://v2.wttr.in'
+
+alias wr='curl "https://wttr.in/?format="%l:+%c+%C+%t""'
+
+alias xa=xbps-alternatives
+
+alias xb='xrandr --output DVI-D-0 --brightness'
+
+alias xi=xbps-install
+
+alias xq=xbps-query
+
+alias xr=xbps-remove
+
+alias xrc=xbps-reconfigure
+
+alias yd=youtube-dl
+
+alias zt=zathura
