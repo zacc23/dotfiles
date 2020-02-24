@@ -1,3 +1,5 @@
+# aliases
+ 
 alias am=alsamixer
 
 alias bc='bc ~/.bcrc -l -q'
@@ -6,7 +8,7 @@ alias btc=bluetoothctl
 
 alias cemu='~/git/CEmu/gui/qt/CEmu'
 
-alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 alias doas='doas -- '
 
@@ -18,9 +20,11 @@ alias gimp='gimp -s'
 
 alias hc=HeadsetControl
 
-alias ls='ls --color=auto'
-
 alias la='ls -a'
+
+alias ll='ls -l'
+
+alias ls='ls --color=auto'
 
 alias lst='ls -t | head'
 
@@ -75,3 +79,7 @@ alias xrc=xbps-reconfigure
 alias yd=youtube-dl
 
 alias zt=zathura
+
+# functions
+
+function sp { sfeed_plain $HOME/.sfeed/feeds/"$1" > $HOME/.sfeed/"$1"; }
