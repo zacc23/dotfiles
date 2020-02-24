@@ -1,0 +1,19 @@
+.result-sponsored { display: none !important; }
+
+pre,textarea,body,input,td,tr,p {
+        background-color: #002b36 !important;
+	background-image: none !important;
+	color: #839496 !important;
+}
+div {
+	background-color: #002b36 !important;
+	background-image: none !important;
+	color:  !important;
+}
+h1,h2,h3,h4 {
+	background-color: #002b36 !important;
+	color: #839496 !important;
+}
+a {
+	color: #dc322f !important;
+}
