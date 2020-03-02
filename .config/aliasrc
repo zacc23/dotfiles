@@ -30,6 +30,8 @@ alias lst='ls -t | head'
 
 alias fw='httpdirfs "https://open.audio" ~/.local/music'
 
+alias make='make -j8'
+
 alias mci='make clean install'
 
 alias mls='mpv "$(ls --color=never -t | sed q)"'
@@ -41,6 +43,8 @@ alias mpa='mpv --no-video'
 alias nf=neofetch
 
 alias pm=pulsemixer
+
+alias sfu=sfeed_update
 
 alias sl='streamlink -v'
 
@@ -82,4 +86,6 @@ alias zt=zathura
 
 # functions
 
-function sp { sfeed_plain $HOME/.sfeed/feeds/"$1" > $HOME/.sfeed/"$1"; }
+function md { markdown "$1" | w3m -T text/html; }
+
+function sfp { sfeed_plain $HOME/.sfeed/feeds/"$1" > $HOME/.sfeed/"$1"; }
