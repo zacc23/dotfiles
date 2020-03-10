@@ -14,6 +14,8 @@ alias doas='doas -- '
 
 alias dt='dict -d wn'
 
+alias fl=figlet
+
 alias fp='ffplay -hide_banner'
 
 alias gimp='gimp -s'
@@ -24,9 +26,7 @@ alias la='ls -a'
 
 alias ll='ls -l'
 
-alias ls='ls --color=auto'
-
-alias lst='ls -t | head'
+alias ls='ls --color'
 
 alias fw='httpdirfs "https://open.audio" ~/.local/music'
 
@@ -68,6 +68,8 @@ alias wf='curl https://v2.wttr.in'
 
 alias wr='curl "https://wttr.in/?format="%l:+%c+%C+%t""'
 
+alias wtf=netbsd-wtf
+
 alias xa=xbps-alternatives
 
 alias xb='xrandr --output DVI-D-0 --brightness'
@@ -86,6 +88,12 @@ alias zt=zathura
 
 # functions
 
-function md { markdown "$1" | w3m -T text/html; }
+function lst { ls -t | sed "$1"q };
 
-function sfp { sfeed_plain $HOME/.sfeed/feeds/"$1" > $HOME/.sfeed/"$1"; }
+function md { markdown "$1" | w3m -T text/html };
+
+function sfp { sfeed_plain $HOME/.sfeed/feeds/"$1" > $HOME/.sfeed/"$1" };
+
+function w3mimg { w3m -o imgdisplay=/usr/lib/w3m/w3mimgdisplay "$1" };
+
+function w3mimgdisplay { /usr/lib/w3m/w3mimgdisplay <<<$'0;1;100;100;100;100;;;;;"$1"\n4;\n3;i' };
