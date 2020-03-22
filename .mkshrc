@@ -1,11 +1,119 @@
-PS1=[$'\e[31m${USER:=$(id -un)}\e[00m'"@${HOSTNAME:=$(hostname)}:\$PWD $(
-	if (( USER_ID )); then print \$; else print \#; fi) " 
-
 # PS1=$'\1\r\1\e[7m\1$PWD\1\e[0m\1> '
+#
+# x=$(print \\001) # otherwise unused char
+#       PS1="$x$(print \\r)$x$(tput so)$x\$PWD$x$(tput se)$x> "
+#
+PS1=[$'\e[31;1m${USER:=$(id -un)}'"@${HOSTNAME:=$(hostname)} ~\${PWD#~}"$'\e[0m'"]$(
+	 if (( USER_ID )); then print \$; else print \#; fi) "
 
-# PS1='${USER:=$(id -un)}'"@${HOSTNAME:=$(hostname)}:\$PWD $(
-#	if (( USER_ID )); then print \$; else print \#; fi) "
+# aliases
+ 
+alias am=alsamixer
 
-# PS1=$'\a\r\a\e[1;34m\a ^ ^  ^ ^ | \a\e[36m\a${USER:=$(ulimit -c 0; id -un 2>/dev/null || echo
-# \?)}@${HOSTNAME%%.*}\a\e[34m\a | ^ ^  ^ ^ | \a\e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
-# print -nr -- "$d")\a\e[1;34m\a |\n ^ ^  ^ ^ | \a\e[32m\a$(date +%H:%M)\a\e[34m\a | ^ ^ >>\a\e[0m\a '
+alias ash='ssh -p 8022'
+
+alias bc='bc ~/.bcrc -l -q'
+
+alias btc=bluetoothctl
+
+alias cemu='~/git/CEmu/gui/qt/CEmu'
+
+alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
+alias curl='curl -s --show-error'
+
+alias dh='du -h'
+
+alias doas='doas -- '
+
+alias doc=catdoc
+
+alias docx=docx2txt
+
+alias doom=crispy-doom
+
+alias dt='dict -d wn'
+
+alias ffmpeg='ffmpeg -hide_banner'
+
+alias ffprobe='ffprobe -hide_banner'
+
+alias fl=figlet
+
+alias fp='ffplay -hide_banner'
+
+alias gimp='gimp -s'
+
+alias hc=HeadsetControl
+
+alias la='ls -a'
+
+alias less='less --mouse'
+
+alias ll='ls -l'
+
+alias ls='ls --color'
+
+alias fw='httpdirfs "https://open.audio" ~/.local/music'
+
+alias make='make -j8'
+
+alias mci='make clean install'
+
+alias mls='mpv "$(ls --color=never -t | sed q)"'
+
+alias mp=mupdf-x11
+
+alias mpa='mpv --no-video'
+
+alias nf=neofetch
+
+alias odt=odt2txt
+
+alias pm=pulsemixer
+
+alias sfu=sfeed_update
+
+alias sl='streamlink -v'
+
+alias spc=speedtest-cli
+
+alias sx=startx
+
+alias tdd='dict -d devil'
+
+alias th='dict -d moby-thesaurus'
+
+alias tmux='tmux -2'
+
+alias tn=twitchnotifier
+
+alias tl='trans -b -no-autocorrect'
+
+alias vi=vim
+
+alias vis=cli-visualizer
+
+alias wf='curl https://v2.wttr.in'
+
+alias wr='curl "https://wttr.in/?format="%l:+%c+%C+%t""'
+
+alias wtf=wtfubar
+
+alias xa=xbps-alternatives
+
+alias xb='xrandr --output DVI-D-0 --brightness'
+
+alias xi=xbps-install
+
+alias xq=xbps-query
+
+alias xr=xbps-remove
+
+alias xrc=xbps-reconfigure
+
+alias yd=youtube-dl
+
+alias zoom='flatpak run us.zoom.Zoom'
+
+alias zt=zathura
