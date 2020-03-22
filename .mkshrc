@@ -71,10 +71,10 @@ w3mimgdisplay() {
 	/usr/lib/w3m/w3mimgdisplay <<<$'0;1;100;100;100;100;;;;;"$1"\n4;\n3;i' 
 }
 
-wm { 
+wm() { 
 	echo "$1" | wc -m 
 }
 
-ww { 
+ww() { 
 	echo "$1" | wc -w 
 }
