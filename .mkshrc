@@ -1,0 +1,11 @@
+PS1=[$'\e[31m${USER:=$(id -un)}\e[00m'"@${HOSTNAME:=$(hostname)}:\$PWD $(
+	if (( USER_ID )); then print \$; else print \#; fi) " 
+
+# PS1=$'\1\r\1\e[7m\1$PWD\1\e[0m\1> '
+
+# PS1='${USER:=$(id -un)}'"@${HOSTNAME:=$(hostname)}:\$PWD $(
+#	if (( USER_ID )); then print \$; else print \#; fi) "
+
+# PS1=$'\a\r\a\e[1;34m\a ^ ^  ^ ^ | \a\e[36m\a${USER:=$(ulimit -c 0; id -un 2>/dev/null || echo
+# \?)}@${HOSTNAME%%.*}\a\e[34m\a | ^ ^  ^ ^ | \a\e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
+# print -nr -- "$d")\a\e[1;34m\a |\n ^ ^  ^ ^ | \a\e[32m\a$(date +%H:%M)\a\e[34m\a | ^ ^ >>\a\e[0m\a '
