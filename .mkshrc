@@ -59,6 +59,14 @@ alias zoom='flatpak run us.zoom.Zoom'
 alias zt=zathura
 
 # Functions
+lst() { 
+	ls -t | sed "$1"q
+}
+
+md() { 
+	markdown "$1" | w3m -T text/html 
+}
+
 sfp() { 
 	sfeed_plain $HOME/.sfeed/feeds/"$1" > $HOME/.sfeed/"$1" 
 }
