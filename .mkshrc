@@ -1,20 +1,23 @@
-PS1=[$'\e[31;1m${USER:=$(id -un)}'"@${HOSTNAME:=$(hostname)} ~\${PWD#~}"$'\e[0m'"]$(
-	 if (( USER_ID )); then print \$; else print \#; fi) "
+PS1=[$'\e[31;1m$(id -un)'"@$(hostname)"\ '$(pwd | sed "s|^$HOME|~|")'$'\e[0m'"]$(
+	if (( USER_ID )); then print \$; else print \#; fi) "
 
-# Aliases
+# aliases
+alias acp='scp -P 8022'
 alias am=alsamixer
 alias ash='ssh -p 8022'
 alias bc='bc ~/.bcrc -l -q'
+alias bplay='aplay -D bluealsa'
 alias btc=bluetoothctl
 alias cemu='~/git/CEmu/gui/qt/CEmu'
 alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias curl='curl -s --show-error'
+alias den='dolphin-emu-nogui'
 alias dh='du -h'
-alias doas='doas -- '
-alias doc=catdoc
-alias docx=docx2txt
+alias diff='diff --color'
+alias doas='doas '
 alias doom=crispy-doom
 alias dt='dict -d wn'
+alias feh='feh -B "#002b36"'
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias fl=figlet
@@ -24,7 +27,7 @@ alias hc=HeadsetControl
 alias la='ls -a'
 alias less='less --mouse'
 alias ll='ls -l'
-alias ls='ls --color'
+alias ls='ls --color=auto'
 alias fw='httpdirfs "https://open.audio" ~/.local/music'
 alias make='make -j8'
 alias mci='make clean install'
@@ -32,8 +35,8 @@ alias mls='mpv "$(ls --color=never -t | sed q)"'
 alias mp=mupdf-x11
 alias mpa='mpv --no-video'
 alias nf=neofetch
-alias odt=odt2txt
 alias pm=pulsemixer
+alias pg="$PAGER"
 alias sfu=sfeed_update
 alias sl='streamlink -v'
 alias spc=speedtest-cli
@@ -55,16 +58,36 @@ alias xq=xbps-query
 alias xr=xbps-remove
 alias xrc=xbps-reconfigure
 alias yd=youtube-dl
-alias zoom='flatpak run us.zoom.Zoom'
+alias zoom='flatpak --socket=pulseaudio run us.zoom.Zoom'
 alias zt=zathura
 
-# Functions
+# functions
+doc() {
+	catdoc "$1" | "$PAGER"
+}
+ 
+docx() {
+	docx2txt "$1" - | "$PAGER"
+}
+# edit which
+ew() { 
+	$EDITOR $(which "$1")
+}
+# last (newest) file(s)	
 lst() { 
-	ls -t | sed "$1"q
+	ls -c --color | sed "$1"q
 }
 
 md() { 
-	markdown "$1" | w3m -T text/html 
+	markdown "$1" | w3m -T text/html | "$PAGER"
+}
+
+odt() {
+	odt2txt "$1" | "$PAGER"
+}
+
+pod() {
+	pod2mdoc "$1" | mandoc | "$PAGER"
 }
 
 sfp() { 
