@@ -1,4 +1,4 @@
-PS1=[$'\e[31;1m$(id -un)'"@$(hostname)"\ '$(pwd | sed "s|^$HOME|~|")'$'\e[0m'"]$(
+PS1=[$'\e[31;1m$(id -un)'"@$(hostname)"\ '$(pwd | sed "s,^$HOME,~,")'$'\e[0m'"]$(
 	if (( USER_ID )); then print \$; else print \#; fi) "
 
 # aliases
@@ -6,9 +6,14 @@ alias acp='scp -P 8022'
 alias am=alsamixer
 alias ash='ssh -p 8022'
 alias bc='bc ~/.bcrc -l -q'
-alias bplay='aplay -D bluealsa'
+alias bluemixer='amixer -D bluealsa' # use for finding bluealsa control name 
+alias bluempa='mpv --no-video --audio-device=alsa/bluealsa'
+alias bluempg='mpg123 -abluealsa -f500'
+alias bluempv='mpv --ao=alsa --audio-device=alsa/bluealsa'
+alias blueplay='aplay -D bluealsa'
 alias btc=bluetoothctl
-alias cemu='~/git/CEmu/gui/qt/CEmu'
+alias bvol='amixer -D bluealsa sset "$BLUEALSA_DEV"'
+alias cemu='$SRC_DIR/CEmu/gui/qt/CEmu'
 alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias curl='curl -s --show-error'
 alias den='dolphin-emu-nogui'
@@ -17,37 +22,46 @@ alias diff='diff --color'
 alias doas='doas '
 alias doom=crispy-doom
 alias dt='dict -d wn'
-alias feh='feh -B "#002b36"'
+alias feh='feh -B black'
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias fl=figlet
 alias fp='ffplay -hide_banner'
 alias gimp='gimp -s'
+alias gw='curl -s https://v2.wttr.in/ | less -FKRSX'
+alias gm='curl -s https://wttr.in/Moon | head -n23 | less -FKRSX'
 alias hc=HeadsetControl
-alias la='ls -a'
+alias la='ls -A'
 alias less='less --mouse'
 alias ll='ls -l'
+alias love='LD_LIBRARY_PATH=$SRC_DIR/openal-soft/build love'
 alias ls='ls --color=auto'
 alias fw='httpdirfs "https://open.audio" ~/.local/music'
-alias make='make -j8'
+alias make='make -j$(nproc)'
+alias mailx=mail
 alias mci='make clean install'
 alias mls='mpv "$(ls --color=never -t | sed q)"'
 alias mp=mupdf-x11
 alias mpa='mpv --no-video'
+alias mpg=mpg123
+alias mpv='mpv --ao=sndio'
 alias nf=neofetch
+alias opusdec='opusdec --quiet'
+alias osu='dotnet run --project $SRC_DIR/osu/osu.Desktop -c Release'
+alias pf=pfetch
 alias pm=pulsemixer
 alias pg="$PAGER"
+alias rec='ffmpeg -video_size 1920x1080 -framerate 60 -f x11grab -i :1 '
 alias sfu=sfeed_update
-alias sl='streamlink -v'
 alias spc=speedtest-cli
+alias sudo=doas
 alias sx=startx
 alias tdd='dict -d devil'
 alias th='dict -d moby-thesaurus'
 alias tmux='tmux -2'
 alias tn=twitchnotifier
 alias tl='trans -b -no-autocorrect'
-alias vi=vim
-alias vis=cli-visualizer
+alias vi=vis
 alias wf='curl https://v2.wttr.in'
 alias wr='curl "https://wttr.in/?format="%l:+%c+%C+%t""'
 alias wtf=wtfubar
@@ -58,10 +72,13 @@ alias xq=xbps-query
 alias xr=xbps-remove
 alias xrc=xbps-reconfigure
 alias yd=youtube-dl
-alias zoom='flatpak --socket=pulseaudio run us.zoom.Zoom'
 alias zt=zathura
 
 # functions
+blueopus() {
+        opusdec --quiet "$1" - | aplay -D bluealsa -
+}
+
 doc() {
 	catdoc "$1" | "$PAGER"
 }
@@ -69,13 +86,17 @@ doc() {
 docx() {
 	docx2txt "$1" - | "$PAGER"
 }
-# edit which
-ew() { 
+
+ew() { # edit which 
 	$EDITOR $(which "$1")
 }
-# last (newest) file(s)	
-lst() { 
+
+lst() { # last (newest) file(s)
 	ls -c --color | sed "$1"q
+}
+
+mad() {
+	lowdown -Tman "$1" | mandoc | "$PAGER"
 }
 
 md() { 
@@ -86,12 +107,22 @@ odt() {
 	odt2txt "$1" | "$PAGER"
 }
 
+opus() {
+	song="$1"
+	shift
+	opusdec "$song" - | aucat -i - "$@" 
+}
+
 pod() {
 	pod2mdoc "$1" | mandoc | "$PAGER"
 }
 
+pw() {
+	< /dev/urandom tr -cd "[:print:]" | head -c 32; echo
+}
+
 sfp() { 
-	sfeed_plain $HOME/.sfeed/feeds/"$1" > $HOME/.sfeed/"$1" 
+	sfeed_plain $HOME/.sfeed/feeds/"$1" | "$PAGER" 
 }
 
 w3mimg() { 
@@ -108,4 +139,8 @@ wm() {
 
 ww() { 
 	echo "$1" | wc -w 
+}
+
+yta() {
+    mpv --ytdl-format=bestaudio ytdl://ytsearch:"$*"
 }
