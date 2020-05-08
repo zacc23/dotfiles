@@ -1,13 +1,16 @@
+#!/bin/sh
 PS1=[$'\e[31;1m$(id -un)'"@$(hostname)"\ '$(pwd | sed "s,^$HOME,~,")'$'\e[0m'"]$(
 	if (( USER_ID )); then print \$; else print \#; fi) "
 
 # aliases
 alias acp='scp -P 8022'
+alias as='alsactl --file ~/.config/asound.state store'
 alias am=alsamixer
+alias anime='mpv --aid=2 --sid=2'
 alias ash='ssh -p 8022'
 alias bc='bc ~/.bcrc -l -q'
 alias bluemixer='amixer -D bluealsa' # use for finding bluealsa control name 
-alias bluempa='mpv --no-video --audio-device=alsa/bluealsa'
+alias bluempa='mpv --no-video --ao=alsa --audio-device=alsa/bluealsa'
 alias bluempg='mpg123 -abluealsa -f500'
 alias bluempv='mpv --ao=alsa --audio-device=alsa/bluealsa'
 alias blueplay='aplay -D bluealsa'
@@ -22,13 +25,15 @@ alias diff='diff --color'
 alias doas='doas '
 alias doom=crispy-doom
 alias dt='dict -d wn'
+alias eng-spa='dict -d fd-eng-spa'
 alias feh='feh -B black'
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias fl=figlet
-alias fp='ffplay -hide_banner'
+alias ffplay='ffplay -hide_banner'
+alias fxname='basename $(ll /proc/$(xprop _NET_WM_PID | awk "{print \$NF}")/exe | awk "{print \$NF}")'
 alias gimp='gimp -s'
-alias gw='curl -s https://v2.wttr.in/ | less -FKRSX'
+alias gw='curl -s https://v2.wttr.in/ | head -n42 | less -FKRSX'
 alias gm='curl -s https://wttr.in/Moon | head -n23 | less -FKRSX'
 alias hc=HeadsetControl
 alias la='ls -A'
@@ -43,28 +48,30 @@ alias mci='make clean install'
 alias mls='mpv "$(ls --color=never -t | sed q)"'
 alias mp=mupdf-x11
 alias mpa='mpv --no-video'
-alias mpg=mpg123
 alias mpv='mpv --ao=sndio'
 alias nf=neofetch
-alias opusdec='opusdec --quiet'
 alias osu='dotnet run --project $SRC_DIR/osu/osu.Desktop -c Release'
 alias pf=pfetch
+alias pl='pacmd list-sinks | grep -e "name:" -e "index:" -e "base volume:"'
 alias pm=pulsemixer
 alias pg="$PAGER"
-alias rec='ffmpeg -video_size 1920x1080 -framerate 60 -f x11grab -i :1 '
+alias rec='ffmpeg -video_size 1920x1080 -framerate 60 -f x11grab -i $DISPLAY '
+alias sc='scrot $SCROT_PATH/%Y-%m-%d-%T-screenshot.png'
 alias sfu=sfeed_update
+alias spa-eng='dict -d fd-spa-eng'
 alias spc=speedtest-cli
 alias sudo=doas
 alias sx=startx
 alias tdd='dict -d devil'
 alias th='dict -d moby-thesaurus'
 alias tmux='tmux -2'
-alias tn=twitchnotifier
 alias tl='trans -b -no-autocorrect'
 alias vi=vis
 alias wf='curl https://v2.wttr.in'
+alias wg=wordgrinder
 alias wr='curl "https://wttr.in/?format="%l:+%c+%C+%t""'
 alias wtf=wtfubar
+alias wtfubar='wtfubar -o'
 alias xa=xbps-alternatives
 alias xb='xrandr --output DVI-D-0 --brightness'
 alias xi=xbps-install
@@ -79,6 +86,10 @@ blueopus() {
         opusdec --quiet "$1" - | aplay -D bluealsa -
 }
 
+dec() {
+	openssl enc -aes-256-cbc -d -in "$1" | tar xz
+}
+
 doc() {
 	catdoc "$1" | "$PAGER"
 }
@@ -87,12 +98,30 @@ docx() {
 	docx2txt "$1" - | "$PAGER"
 }
 
+enc() {
+	tar cz "$1" | openssl enc -aes-256-cbc -out "$1".tar.gz.dat && srm -r "$1"
+}
+
+epub() {
+	epub2txt "$1" | "$PAGER"
+}
+
 ew() { # edit which 
-	$EDITOR $(which "$1")
+	"$EDITOR" $(which "$1")
+}
+
+hex() {
+	strings "$1" | "$PAGER"
 }
 
 lst() { # last (newest) file(s)
-	ls -c --color | sed "$1"q
+	ls -c --color $2 | sed "$1"q
+}
+
+m4a() {
+        song="$1"
+        shift
+        faad -q -w "$song" | aucat -i - "$@"
 }
 
 mad() {
@@ -103,14 +132,36 @@ md() {
 	markdown "$1" | w3m -T text/html | "$PAGER"
 }
 
+mid() {
+	song="$1"
+        shift
+	fluidsynth -i -n -T raw -F- "$SF2" "$song" 2>/dev/null | aucat -i - "$@"
+}
+
+mono() {
+	ffmpeg -i "$1" -ac 1 /tmp/"$1" && mv /tmp/"$1" .
+}
+
+mp123() {
+	song="$1"
+        shift
+	mpg123 -q -s "$song" | aucat -i - "$@"	
+}
+
 odt() {
 	odt2txt "$1" | "$PAGER"
+}
+
+ogg() {
+	song="$1"
+        shift
+        oggdec -Q "$song" -o - | aucat -i - "$@"
 }
 
 opus() {
 	song="$1"
 	shift
-	opusdec "$song" - | aucat -i - "$@" 
+	opusdec --quiet "$song" - | aucat -i - "$@" 
 }
 
 pod() {
@@ -119,6 +170,10 @@ pod() {
 
 pw() {
 	< /dev/urandom tr -cd "[:print:]" | head -c 32; echo
+}
+
+rst() {
+	rst2man "$1" | mandoc | "$PAGER"
 }
 
 sfp() { 
@@ -141,6 +196,10 @@ ww() {
 	echo "$1" | wc -w 
 }
 
+ydfp() {
+	yd -q "$1" -o - | ffplay -loglevel 8 -
+}
+
 yta() {
-    mpv --ytdl-format=bestaudio ytdl://ytsearch:"$*"
+	mpv --ytdl-format=bestaudio ytdl://ytsearch:"$*"
 }
