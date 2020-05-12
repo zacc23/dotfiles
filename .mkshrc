@@ -6,13 +6,13 @@ PS1=[$'\e[31;1m$(id -un)'"@$(hostname)"\ '$(pwd | sed "s,^$HOME,~,")'$'\e[0m'"]$
 alias acp='scp -P 8022'
 alias as='alsactl --file ~/.config/asound.state store'
 alias am=alsamixer
-alias anime='mpv --aid=2 --sid=2'
 alias ash='ssh -p 8022'
-alias bc='bc ~/.bcrc -l -q'
+alias bc='$PLAN9/bin/bc -l'
 alias bluemixer='amixer -D bluealsa' # use for finding bluealsa control name 
 alias bluempa='mpv --no-video --ao=alsa --audio-device=alsa/bluealsa'
 alias bluempg='mpg123 -abluealsa -f500'
 alias bluempv='mpv --ao=alsa --audio-device=alsa/bluealsa'
+alias bluenaw='mpv --ao=alsa --audio-device=alsa/bluealsa --aid=2 --sid=2'
 alias blueplay='aplay -D bluealsa'
 alias btc=bluetoothctl
 alias bvol='amixer -D bluealsa sset "$BLUEALSA_DEV"'
@@ -49,6 +49,7 @@ alias mls='mpv "$(ls --color=never -t | sed q)"'
 alias mp=mupdf-x11
 alias mpa='mpv --no-video'
 alias mpv='mpv --ao=sndio'
+alias naw='mpv --aid=2 --sid=2' # not a weeb
 alias nf=neofetch
 alias osu='dotnet run --project $SRC_DIR/osu/osu.Desktop -c Release'
 alias pf=pfetch
@@ -66,6 +67,7 @@ alias tdd='dict -d devil'
 alias th='dict -d moby-thesaurus'
 alias tmux='tmux -2'
 alias tl='trans -b -no-autocorrect'
+alias trc=transmission-remote-cli
 alias vi=vis
 alias wf='curl https://v2.wttr.in'
 alias wg=wordgrinder
