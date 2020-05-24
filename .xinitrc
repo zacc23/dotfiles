@@ -16,7 +16,7 @@ kiwix-serve --port=8008 $XDG_DOCUMENTS_DIR/wikipedia/wikipedia_en_all_maxi_*.zim
 
 sfeed_update & >/dev/null
 
-feh --bg-scale /usr/local/share/wallpapers/Autumn/contents/images/1920x1080.jpg
+~/.fehbg &
 
 numlockx on
 
