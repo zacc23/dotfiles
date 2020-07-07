@@ -1,0 +1,5 @@
+set output_plugin=alsa
+set dsp.alsa.device=bluealsa
+set mixer.alsa.device=bluealsa
+set mpris=false
+colorscheme solarized-dark

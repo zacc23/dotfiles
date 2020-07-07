@@ -1,0 +1,3 @@
+set output_plugin=sndio
+set mpris=false
+colorscheme solarized-dark
