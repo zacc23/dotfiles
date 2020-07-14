@@ -1,0 +1,24 @@
+#!/bin/sh
+vfio-bind 0000:01:00.0 0000:01:00.1
+sv force-stop ckb-next-daemon >/dev/null 
+
+qemu-system-x86_64 -enable-kvm -m 8192 -cpu host,kvm=off \
+-smp 2,sockets=1,cores=2,threads=1 \
+-device vfio-pci,host=01:00.0,x-vga=on,romfile=/win/204908.rom -device vfio-pci,host=01:00.1 \
+-device qemu-xhci,id=xhci -device usb-host,bus=xhci.0,vendorid=0x1b1c,productid=0x1b44 -device usb-host,bus=xhci.0,vendorid=0x046d,productid=0xc332 -device usb-host,bus=xhci.0,vendorid=0x046d,productid=0x0a5b \
+-net nic -net user,smb=/win/shared \
+-display none \
+-drive if=pflash,format=raw,readonly,file=/usr/share/edk2/ovmf/OVMF_CODE.fd \
+-drive if=pflash,format=raw,file=/usr/share/edk2/ovmf/OVMF_VARS.fd \
+-vga none \
+-drive file=/win/win10-uefi.img,id=disk,format=raw,if=none \
+-device ide-hd,bus=ide.1,drive=disk \
+-boot order=dc \
+-drive file=/win/en_windows_10_enterprise_ltsc_2019_x64_dvd_5795bb03.iso,format=raw,id=virtiocd,if=none \
+-device ide-cd,bus=ide.1,drive=virtiocd \
+"$@"
+
+# 0000:00:14.0
+# -device vfio-pci,host=0000:00:14.0
+# -object input-linux,id=kbd,evdev=/dev/input/by-path/platform-i8042-serio-0-event-kbd,grab_all=y \
+
