@@ -24,7 +24,7 @@ alias feh='feh -R 0' # -B black
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias fl=figlet
-alias ffplay='ffplay -autoexit -hide_banner -v error -stats'
+alias ffplay='ffplay -autoexit -hide_banner -v 8 -stats'
 alias fxname='basename $(ll /proc/$(xprop _NET_WM_PID | awk "{print \$NF}")/exe | awk "{print \$NF}")'
 alias gdb='gdb -q'
 alias gimp='gimp -s'
@@ -47,13 +47,15 @@ alias pf=pfetch
 alias pl='pacmd list-sinks | grep -e "name:" -e "index:" -e "base volume:"'
 alias pm=pulsemixer
 alias pg="$PAGER"
-alias pi='echo "scale=10; 4*a(1)" | bc -l'
+alias pi='print "scale=10; 4*a(1)" | bc -l'
 alias rec='ffmpeg -video_size 1920x1080 -framerate 60 -f x11grab -i $DISPLAY '
+alias root='root -l'
 alias scrot='scrot %Y-%m-%d-%T-screenshot.png'
 alias sfu=sfeed_update
 alias spc=speedtest-cli
 alias sudo=doas
 alias sx=startx
+alias tb='nc termbin.com 9999'
 alias th='dict -d moby-thesaurus' # th='dict -d roget'
 alias tmux='tmux -2'
 alias tl='trans -b -no-autocorrect'
@@ -63,7 +65,7 @@ alias whereami='curl https://ipinfo.io/8.8.8.8/loc'
 alias wr='curl "https://wttr.in/phf?format="%l:+%c+%C+%t""'
 alias wtf=netbsd-wtf
 alias wtfubar='wtfubar -o'
-alias youtube-dl='youtube-dl -i -q'
+alias youtube-dl='youtube-dl -i' 
 
 # functions
 2sf() {
@@ -183,7 +185,7 @@ pod() {
 }
 
 pw() {
-	< /dev/urandom tr -cd "[:print:]" | head -c 32; echo
+	< /dev/urandom tr -cd "[:print:]" | head -c 32; print 
 }
 
 rst() {
@@ -227,6 +229,16 @@ torrent() { # yoinked from https://gitlab.com/dessalines/torrents.csv/-/raw/mast
 	done
 }
 
+tts() {
+	url="$1"
+        shift
+        dir=~/videos/tmp
+        vid="$(youtube-dl --get-filename --restrict-filenames "$url")"
+        mkdir -p "$dir"
+        [ ! -f "$dir"/"$vid" ] && youtube-dl "$url" -o "$dir"/"$vid"
+        ffplay "$dir"/"$vid" "$@"
+}
+
 upload() {
 	curl -T "$1" https://oshi.at/"$(basename "$1")"/129600 
 }
@@ -244,19 +256,15 @@ w3mimgdisplay() {
 }
 
 wm() { 
-	echo "$1" | wc -m 
+	print "$1" | wc -m 
 }
 
 ww() { 
-	echo "$1" | wc -w 
+	print "$1" | wc -w 
 }
 
 xb() {
 	xrandr --output DVI-D-0 --brightness "$1" --output HDMI-A-0 --brightness "$1"
-}
-
-yta() {
-	mpv --ytdl-format=bestaudio ytdl://ytsearch:"$*"
 }
 
 yts() { # youtube video links expire after some time
@@ -264,8 +272,8 @@ yts() { # youtube video links expire after some time
 	shift
 	dir=~/videos/tmp
 	format=mkv
-	vid="$(youtube-dl -e --restrict-filenames "$url")"."$format"
+	vid="$(youtube-dl -e "$url")"."$format" # causes issues if 's' is in the filename
 	mkdir -p "$dir"
-	[ ! -f "$dir"/"$vid" ] && youtube-dl "$url" --merge-output-format "$format" --recode-video "$format" -o "$dir"/"$vid"
+	[ ! -f "$dir"/"$vid" ] && youtube-dl "$url" --merge-output-format "$format" --recode-video "$format" "$dir"/"$vid"
 	ffplay "$dir"/"$vid" "$@"
 }

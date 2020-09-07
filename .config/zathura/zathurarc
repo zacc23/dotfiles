@@ -1,1 +1,7 @@
-set default-fg \#CCBBCC
+set guioptions ""
+set default-fg \#CCBBC
+#set recolor
+#set recolor-lightcolor \#222222
+set recolor-darkcolor \#839496
+set statusbar-bg \#002b36
+set statusbar-fg \#839496

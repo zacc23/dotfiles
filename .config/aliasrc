@@ -2,6 +2,8 @@
  
 alias am=alsamixer
 
+alias ash='ssh -p 8022'
+
 alias bc='bc ~/.bcrc -l -q'
 
 alias btc=bluetoothctl
@@ -10,9 +12,23 @@ alias cemu='~/git/CEmu/gui/qt/CEmu'
 
 alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
+alias curl='curl -s --show-error'
+
+alias dh='du -h'
+
 alias doas='doas -- '
 
+alias doc=catdoc
+
+alias docx=docx2txt
+
+alias doom=crispy-doom
+
 alias dt='dict -d wn'
+
+alias ffmpeg='ffmpeg -hide_banner'
+
+alias ffprobe='ffprobe -hide_banner'
 
 alias fl=figlet
 
@@ -23,6 +39,8 @@ alias gimp='gimp -s'
 alias hc=HeadsetControl
 
 alias la='ls -a'
+
+alias less='less --mouse'
 
 alias ll='ls -l'
 
@@ -42,6 +60,8 @@ alias mpa='mpv --no-video'
 
 alias nf=neofetch
 
+alias odt=odt2txt
+
 alias pm=pulsemixer
 
 alias sfu=sfeed_update
@@ -60,6 +80,8 @@ alias tmux='tmux -2'
 
 alias tn=twitchnotifier
 
+alias tl='trans -b -no-autocorrect'
+
 alias vi=vim
 
 alias vis=cli-visualizer
@@ -68,7 +90,7 @@ alias wf='curl https://v2.wttr.in'
 
 alias wr='curl "https://wttr.in/?format="%l:+%c+%C+%t""'
 
-alias wtf=netbsd-wtf
+alias wtf=wtfubar
 
 alias xa=xbps-alternatives
 
@@ -84,6 +106,8 @@ alias xrc=xbps-reconfigure
 
 alias yd=youtube-dl
 
+alias zoom='flatpak run us.zoom.Zoom'
+
 alias zt=zathura
 
 # functions
@@ -97,3 +121,7 @@ function sfp { sfeed_plain $HOME/.sfeed/feeds/"$1" > $HOME/.sfeed/"$1" };
 function w3mimg { w3m -o imgdisplay=/usr/lib/w3m/w3mimgdisplay "$1" };
 
 function w3mimgdisplay { /usr/lib/w3m/w3mimgdisplay <<<$'0;1;100;100;100;100;;;;;"$1"\n4;\n3;i' };
+
+function wm { echo "$1" | wc -m };
+
+function ww { echo "$1" | wc -w };
