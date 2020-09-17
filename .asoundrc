@@ -1,0 +1,17 @@
+pcm.!default {
+	type asym
+	playback.pcm
+	{
+    		type sndio 
+  	}
+  	capture.pcm
+  	{
+    		type hw
+		card 0
+                device 0
+  	}
+}
+
+defaults.bluealsa.service "org.bluealsa"
+defaults.bluealsa.device "E0:EB:40:2F:ED:39"
+defaults.bluealsa.profile "a2dp"
