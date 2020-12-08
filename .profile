@@ -1,8 +1,9 @@
 #!/bin/sh
 # environment variables
-PATH="$PATH:/usr/lib/surfraw:$HOME/dotnet:$HOME/bin:$HOME/.local/bin"
-eval `dircolors ~/.dir_colors`
+PATH="$PATH:/usr/lib/surfraw:$HOME/dotnet:$HOME/bin:$HOME/.local/bin:$HOME/.node_modules/bin"
+export AUDIODRIVER=sndio
 export BLUEALSA_DEV='AirPods - A2DP'
+export BROWSER=surf
 export CLR_OPENSSL_VERSION_OVERRIDE=47
 export DOOMWADDIR=$HOME/games/doom
 export DOTNET_ROOT=$HOME/dotnet
@@ -13,6 +14,7 @@ export GAME_DIR=$HOME/games
 export GDK_CORE_DEVICE_EVENTS=1
 export GOPATH=$HOME/.local
 export _JAVA_AWT_WM_NONREPARENTING=1
+export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/amd_icd32.json:/usr/share/vulkan/icd.d/amd_icd64.json
 export LESS=-R
 export LESS_TERMCAP_mb=$'\E[1;31m'     # begin blink
 export LESS_TERMCAP_md=$'\E[1;31m'     # begin bold
@@ -23,6 +25,7 @@ export LESS_TERMCAP_us=$'\E[1;34m'     # begin underline
 export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:/usr/lib/plan9/man"
 export MOZ_PLUGIN_PATH=$HOME/plugins
+export npm_config_prefix=$HOME/.node_modules
 export PAGER=less
 export PASS=tpm # pass compatible manager: pass, tpm, or spm
 export PIPELIGHT_EMBED=0
@@ -33,6 +36,7 @@ export SCROT_PATH=$HOME/pictures/screenshots
 export SDL_AUDIODRIVER=sndio
 export SF2=/usr/share/soundfonts/FluidR3_GM.sf2
 export SJ_DIR=$HOME/.xmpp
+export VID_DIR=$HOME/videos/tmp
 export WINEDEBUG=fps
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local"
@@ -46,6 +50,8 @@ export XDG_PICTURES_DIR="$HOME/pictures"
 export XDG_VIDEOS_DIR="$HOME/videos"
 
 # commands
+transmission-daemon -i 10.65.249.217 -I fc00:bbbb:bbbb:bb01::2:f9d8
+
 if test -z "${XDG_RUNTIME_DIR}"; then
     export XDG_RUNTIME_DIR=/tmp/${UID}-runtime-dir
     if ! test -d "${XDG_RUNTIME_DIR}"; then

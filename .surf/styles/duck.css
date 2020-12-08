@@ -1,1 +1,36 @@
-dark.css
+.result-sponsored { display: none !important; }
+p.extra { display: none !important; }
+input.submit { display: none !important; }
+input.navbutton { display: none !important; }
+select.submit { display: none !important; }
+
+td {
+  empty-cells: hide !important;
+}
+
+.header {
+	color: #cb4b16 !important;
+}
+pre,textarea,body,input,td,tr,p {
+        background-color: #002b36 !important;
+	background-image: none !important;
+	color: #839496 !important;
+}
+div {
+	background-color: transparent !important;
+	background-image: none !important;
+	color: default !important;
+}
+h1,h2,h3,h4 {
+	background-color: #002b36 !important;
+	color: #839496 !important;
+}
+.query {
+	border-color: #dc322f !important;
+}
+a {
+	color: #2aa198 !important;
+}
+span.link-text {
+	color: #859900 !important;
+}

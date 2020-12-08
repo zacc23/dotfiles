@@ -12,37 +12,41 @@ alias bluempg='mpg123 -abluealsa -f500'
 alias blueplay='aplay -D bluealsa'
 alias bvol='amixer -D bluealsa sset "$BLUEALSA_DEV"'
 alias cemu='$SRC_DIR/CEmu/gui/qt/CEmu'
+alias cm='curl -s https://wttr.in/moon | head -n23' # | less -FKRSX
+alias cmakerm='xargs rm < install_manifest.txt'
 alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias curl='curl -s --show-error'
+alias cw='curl -s https://v2.wttr.in/phf | head -n42' # | less -FKRSX
+alias deemix='deemix -b flac -p .'
 alias den='dolphin-emu-nogui'
 alias diff='diff --color'
 alias doas='doas '
 alias doom=crispy-doom
 alias dos2unix='dos2unix -q'
-alias dt='dict -d gcide' # dt='dict -d pgw'
+alias dt='dict -d wn' # dt='dict -d pgw'
 alias feh='feh -R 0' # -B black
+alias fetch='fdm -kv fetch'
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias fl=figlet
-alias ffplay='ffplay -autoexit -hide_banner -v 8 -stats'
+alias ffplay='ffplay -af "aresample=out_channel_layout=stereo" -autoexit -hide_banner -v 8 -stats'
 alias fxname='basename $(ll /proc/$(xprop _NET_WM_PID | awk "{print \$NF}")/exe | awk "{print \$NF}")'
 alias gdb='gdb -q'
 alias gimp='gimp -s'
-alias gw='curl -s https://v2.wttr.in/phf | head -n42' # | less -FKRSX
-alias gm='curl -s https://wttr.in/moon | head -n23' # | less -FKRSX
 alias hc=HeadsetControl
 alias la='ls -A'
 alias less='less --mouse'
 alias ll='ls -l'
-alias love='LD_LIBRARY_PATH=$SRC_DIR/openal-soft/build love'
 alias ls='ls --color=auto'
 alias fw='httpdirfs "https://open.audio" ~/.local/music'
+alias maxima='maxima -q'
 alias make='make -j$(nproc)'
 alias mailx=mail
 alias mci='make clean install'
+alias metaflac-dump='metaflac --export-tags-to -'
 alias nf=neofetch
 alias osu='dotnet run --project $SRC_DIR/osu/osu.Desktop -c Release'
-alias pdf=zathura
+alias pdf=mupdf
 alias pf=pfetch
 alias pl='pacmd list-sinks | grep -e "name:" -e "index:" -e "base volume:"'
 alias pm=pulsemixer
@@ -60,18 +64,24 @@ alias th='dict -d moby-thesaurus' # th='dict -d roget'
 alias tmux='tmux -2'
 alias tl='trans -b -no-autocorrect'
 alias trc='transmission-remote-cli >/dev/null'
-alias wf='curl https://v2.wttr.in'
+alias updatetcsv='curl -sf "https://codeberg.org/heretic/torrents-csv-data/raw/branch/main/torrents.csv" > ~/.local/torrents.csv'
 alias whereami='curl https://ipinfo.io/8.8.8.8/loc'
-alias wr='curl "https://wttr.in/phf?format="%l:+%c+%C+%t""'
-alias wtf=netbsd-wtf
+alias wr='curl "https://wttr.in/phf?format="%l:+%c+%C+%t""; echo'
+alias wtf='netbsd-wtf -o'
 alias wtfubar='wtfubar -o'
 alias youtube-dl='youtube-dl -i' 
+alias z='zzz >/dev/null'
 
 # functions
 2sf() {
 	song="$1"
 	shift	
 	2sftowav "$song" /dev/stdout 2>/dev/null | aucat -r 44100 -i - "$@" 
+}
+
+lowercase() {
+	zip -0 -r "$1".zip "$1"
+	unzip -LL "$1".zip
 }
 
 blueopus() {
@@ -82,6 +92,12 @@ c() {
 	printf "%s\n" "$*" | bc 
 }
 
+caud() {
+	vid="$1"
+	shift
+	ffplay -nodisp "$@" "$(youtube-dl -g -x "$vid")"
+}
+
 cvid() {
         vid="$1"
         shift
@@ -89,6 +105,10 @@ cvid() {
 }
 
 dec() {
+        openssl enc -aes-256-cbc -f -in "$1" 
+}
+
+decdir() {
 	openssl enc -aes-256-cbc -d -in "$1" | tar xz
 }
 
@@ -101,6 +121,10 @@ docx() {
 }
 
 enc() {
+	openssl enc -aes-256-cbc "$1" -out "$1".dat && srm "$1"
+}
+ 
+encdir() {
 	tar cz "$1" | openssl enc -aes-256-cbc -out "$1".tar.gz.dat && srm -r "$1"
 }
 
@@ -118,6 +142,14 @@ hex() {
 
 ips() {
 	ip addr show "${1:-eth0}" | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/'
+}
+
+iso_mount() {
+	losetup -P /dev/loop0 "$1"
+}
+
+iso_unmount() {
+	losetup -d /dev/loop0
 }
 
 lac() {
@@ -185,7 +217,7 @@ pod() {
 }
 
 pw() {
-	< /dev/urandom tr -cd "[:print:]" | head -c 32; print 
+	< /dev/urandom tr -cd "[:print:]" | head -c 16; print 
 }
 
 rst() {
@@ -212,11 +244,22 @@ sortsize() {
 	du -sh -- "$@" | sort -hr
 }
 
-torrent() { # yoinked from https://gitlab.com/dessalines/torrents.csv/-/raw/master/search.sh
-	url="https://gitlab.com/dessalines/torrents.csv/-/raw/master/torrents.csv"
-	file="torrents.csv"
-	[ ! -f /tmp/"$file" ] && curl -sf "$url" > /tmp/"$file"
-	 grep -i ${1// /.*} /tmp/"$file" | sort -t ';' -k 5 -g | while read -r line; do
+tget() { # for twitch videos and other m3u streams
+	url="$1"
+        shift
+        dir="$VID_DIR"
+        fmt=mkv
+        vid="$(youtube-dl --restrict-filenames -e "$url")"
+        mkdir -p "$dir"
+        [ ! -f "$dir"/"$vid"."$fmt" ] && ffmpeg -i $(youtube-dl -g "$url") -c copy "$@" "$dir"/"$vid"."$fmt" 
+}
+	 
+torrent() { # yoinked from https://gitlab.com/dessalines/torrents.csv
+	url="https://codeberg.org/heretic/torrents-csv-data/raw/branch/main/torrents.csv"
+	dir=~/.local
+	file=torrents.csv
+	[ ! -f "$dir"/"$file" ] && curl -sf "$url" > "$dir"/"$file"
+	 grep -i ${1// /.*} "$dir"/"$file" | sort -t ';' -k 5 -g | while read -r line; do
 	 infohash=$(echo -e "$line" | cut -d ';' -f1)
 	 magnet_link="magnet:?xt=urn:btih:$infohash"
   	 name=$(echo -e "$line" | cut -d ';' -f2)
@@ -247,6 +290,27 @@ video() {
 	ffmpeg -re -i "$1" -f v4l2 /dev/video0	
 }
 
+vget() {
+	url="$1"	
+	shift
+	dir="$VID_DIR"
+	format=mkv
+	vid="$(youtube-dl --restrict-filenames -e "$url")"
+	mkdir -p "$dir"
+	[ ! -f "$dir"/"$vid"."$format" ] && youtube-dl --restrict-filenames "$url" "$@" --merge-output-format "$format" --recode-video "$format" -o "$dir"/"$vid"   
+}
+
+vtmp() { # youtube video links expire after some time
+        url="$1"
+        shift
+        dir="$VID_DIR"
+        fmt=mkv
+        vid="$(youtube-dl --restrict-filenames -e "$url")" # causes issues if 's' is in the filename
+        mkdir -p "$dir"
+        [ ! -f "$dir"/"$vid"."$fmt" ] && youtube-dl --restrict-filenames "$url" --merge-output-format "$fmt" --recode-video "$fmt" -o "$dir"/"$vid"
+        ffplay "$dir"/"$vid"."$fmt" "$@"
+}
+
 w3mimg() { 
 	w3m -o imgdisplay=/usr/lib/w3m/w3mimgdisplay "$1" 
 }
@@ -267,13 +331,6 @@ xb() {
 	xrandr --output DVI-D-0 --brightness "$1" --output HDMI-A-0 --brightness "$1"
 }
 
-yts() { # youtube video links expire after some time
-	url="$1"
-	shift
-	dir=~/videos/tmp
-	format=mkv
-	vid="$(youtube-dl -e "$url")"."$format" # causes issues if 's' is in the filename
-	mkdir -p "$dir"
-	[ ! -f "$dir"/"$vid" ] && youtube-dl "$url" --merge-output-format "$format" --recode-video "$format" "$dir"/"$vid"
-	ffplay "$dir"/"$vid" "$@"
+yts() {
+	youtube-dl -j "ytsearch$2:${1:-1}" | jq -M -r '"[" + .uploader + "] " + .title, "https://youtube.com/watch?v=" + .id'
 }
