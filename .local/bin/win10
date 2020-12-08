@@ -19,11 +19,12 @@ mkdir -p "$hugepage_dir"
 mount -t hugetlbfs hugetlbfs "$hugepage_dir" 
 sysctl vm.nr_hugepages=4096
 qemu-cpupin "$vm" 8 0
-sv force-stop ckb-next-daemon transmission-daemon wireguard # >/dev/null 
+sv force-stop ckb-next-daemon wireguard # transmission-daemon >/dev/null 
+pkill transmission-da
 
 qemu-system-x86_64 -enable-kvm -m 8192 -cpu host,kvm=off -rtc base=localtime \
 -smp 2,sockets=1,cores=2,threads=1 -mem-path /dev/hugepages \
--device vfio-pci,host=01:00.0,x-vga=on,romfile="$rom" -device vfio-pci,host=01:00.1 \
+-device vfio-pci,host=01:00.0,x-vga=on,romfile="$rom" -device vfio-pci,host=01:00.1 -device vfio-pci,host=00:1f.3 \
 -device qemu-xhci,id=xhci -device usb-host,bus=xhci.0,vendorid=0x1b1c,productid=0x1b44 -device usb-host,bus=xhci.0,vendorid=0x046d,productid=0xc332 -device usb-host,bus=xhci.0,vendorid=0x0b05,productid=0x17cb \
 -display none \
 -drive if=pflash,format=raw,readonly,file="$ovmf_dir"/"$ovmf_code" \

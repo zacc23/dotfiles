@@ -1,11 +1,15 @@
 #!/bin/sh
 # yoinked from https://wiki.archlinux.org/index.php/Gaming#Starting_games_in_a_separate_X_server
+# xvidtune -show | head -n1
 # doas unshare -n doas -u zacc
-game="$(which "$1")"
-shift
-args="$*"
+#[ -f "$script" ] && rm "$script"
 script=/tmp/game.sh
-echo \""$game"\" "$args" > "$script"
+game="$(which "$1")" 
+echo \""$game"\" > "$script"
+shift
+for i in "$@"; do
+	echo -n \""$i"\"" " >> "$script"
+done
 chmod +x "$script"
 #MANGOHUD_CONFIG="" MANGOHUD_DLSYM=1 mangohud \
 xinit "$script" -- :1 -config game.conf
