@@ -1,4 +1,9 @@
 #!/bin/sh
+# Based off of the ebuild from https://gitweb.gentoo.org/repo/gentoo.git/plain/games-action/battalion/battalion-1.4b-r1.ebuild, so \
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+
 PN=battalion
 PV=1.4b
 PE=.tar.bz2
@@ -13,6 +18,8 @@ download_src() {
 	for p in ${PATCH_URI}; do
                 curl -s -O "$p"
         done
+
+	cd ..
 }
 
 patch_src() {
@@ -30,6 +37,9 @@ patch_src() {
 	sed -i \
                 -e "s:TEXTURES/:/usr/share/${PN}/TEXTURES/:" \
                	graphics.c
+
+	sed -i \
+		-e "s:TEXTURES/:
 
 	rm SOUNDS/*.au
 	rm MUSIC/*.au
@@ -79,11 +89,11 @@ while getopts "hdpbiru" opt; do
 		;;
 	d) download_src
 		;;
-	p) patch_src
+	p) cd ${PN}${PV}; patch_src; cd ..
 		;;
-	b) build_src
+	b) cd ${PN}${PV}; build_src; cd ..
 		;;
-	i) install_src
+	i) cd ${PN}${PV}; install_src; cd ..
 		;;
 	r) rm_src
 		;;
