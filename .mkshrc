@@ -13,6 +13,7 @@ alias blueplay='aplay -D bluealsa'
 alias bvol='amixer -D bluealsa sset "$BLUEALSA_DEV"'
 alias cemu='$SRC_DIR/CEmu/gui/qt/CEmu'
 alias cm='curl -s https://wttr.in/moon | head -n23' # | less -FKRSX
+alias cmake='cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release'
 alias cmakerm='xargs rm < install_manifest.txt'
 alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias curl='curl -s --show-error'
@@ -24,6 +25,7 @@ alias doas='doas '
 alias doom=crispy-doom
 alias dos2unix='dos2unix -q'
 alias dt='dict -d wn' # dt='dict -d pgw'
+alias dwdiff='dwdiff -3 -c'
 alias feh='feh -R 0' # -B black
 alias fetch='fdm -kv fetch'
 alias ffmpeg='ffmpeg -hide_banner'
@@ -34,11 +36,12 @@ alias fxname='basename $(ll /proc/$(xprop _NET_WM_PID | awk "{print \$NF}")/exe 
 alias gdb='gdb -q'
 alias gimp='gimp -s'
 alias hc=HeadsetControl
+#alias killgpg='gpg-connect-agent reloadagent /bye'
 alias la='ls -A'
 alias less='less --mouse'
 alias ll='ls -l'
 alias ls='ls --color=auto'
-alias fw='httpdirfs "https://open.audio" ~/.local/music'
+#alias fw='httpdirfs "https://open.audio" ~/.local/music'
 alias maxima='maxima -q'
 alias make='make -j$(nproc)'
 alias mailx=mail
@@ -56,7 +59,6 @@ alias rec='ffmpeg -video_size 1920x1080 -framerate 60 -f x11grab -i $DISPLAY '
 alias root='root -l'
 alias scrot='scrot %Y-%m-%d-%T-screenshot.png'
 alias sfu=sfeed_update
-alias spc=speedtest-cli
 alias sudo=doas
 alias sx=startx
 alias tb='nc termbin.com 9999'
@@ -65,6 +67,7 @@ alias tmux='tmux -2'
 alias tl='trans -b -no-autocorrect'
 alias trc='transmission-remote-cli >/dev/null'
 alias updatetcsv='curl -sf "https://codeberg.org/heretic/torrents-csv-data/raw/branch/main/torrents.csv" > ~/.local/torrents.csv'
+alias wdiff=dwdiff
 alias whereami='curl https://ipinfo.io/8.8.8.8/loc'
 alias wr='curl "https://wttr.in/phf?format="%l:+%c+%C+%t""; echo'
 alias wtf='netbsd-wtf -o'
@@ -79,9 +82,15 @@ alias z='zzz >/dev/null'
 	2sftowav "$song" /dev/stdout 2>/dev/null | aucat -r 44100 -i - "$@" 
 }
 
-lowercase() {
-	zip -0 -r "$1".zip "$1"
-	unzip -LL "$1".zip
+atmp() { # youtube audio links expire after some time, might rm because too complicated 
+        url="$1"
+        shift
+        dir="$VID_DIR"
+        aud="$(youtube-dl --restrict-filenames -x -e "$url")" # causes issues if 's' is in the filename
+	fmt="$(youtube-dl -x -F "$url" | grep 'audio only' | awk '{print $2}' | tail -n1)" 
+        mkdir -p "$dir"
+        [ ! -f "$dir"/"$aud"."$fmt" ] && youtube-dl --restrict-filenames -x "$url" -o "$dir"/"$aud"."$fmt"
+        ffplay -nodisp "$dir"/"$aud"."$fmt" "$@"
 }
 
 blueopus() {
@@ -144,18 +153,19 @@ ips() {
 	ip addr show "${1:-eth0}" | grep 'inet ' | awk '{print $2}' | cut -f1 -d'/'
 }
 
-iso_mount() {
-	losetup -P /dev/loop0 "$1"
-}
-
-iso_unmount() {
-	losetup -d /dev/loop0
-}
-
 lac() {
 	song="$1"
         shift
 	flac -s -d "$song" -c | aucat -r 44100 -i - "$@"
+}
+
+lcase() { # haven't tested, from https://www.tecmint.com/rename-all-files-and-directory-names-to-lowercase-in-linux/
+	find "$1" -depth | xargs -n 1 rename -v 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;
+}
+
+lowercase() { # possible solution from https://stackoverflow.com/a/25590300
+        zip -0 -r "$1".zip "$1"
+        unzip -LL "$1".zip
 }
 
 lst() { # last file(s)
@@ -220,6 +230,12 @@ pw() {
 	< /dev/urandom tr -cd "[:print:]" | head -c 16; print 
 }
 
+qemu() {
+	qemu-system-x86_64 -machine kernel_irqchip=off -boot d -enable-kvm \
+	-smp 2,sockets=1,cores=2,threads=1 -m 8192 -cdrom "$1" \
+	-display sdl
+}
+
 rst() {
 	rst2man "$1" | mandoc | "$PAGER"
 }
@@ -242,6 +258,10 @@ shorten() {
 
 sortsize() {
 	du -sh -- "$@" | sort -hr
+}
+
+spc() {
+	play_spc "$1" /dev/stdout | aucat -r 32000 -i -
 }
 
 tget() { # for twitch videos and other m3u streams
@@ -286,6 +306,10 @@ upload() {
 	curl -T "$1" https://oshi.at/"$(basename "$1")"/129600 
 }
 
+usf() {
+	lazyusf --playback "$1" >/dev/null
+}
+
 video() {
 	ffmpeg -re -i "$1" -f v4l2 /dev/video0	
 }
@@ -298,6 +322,11 @@ vget() {
 	vid="$(youtube-dl --restrict-filenames -e "$url")"
 	mkdir -p "$dir"
 	[ ! -f "$dir"/"$vid"."$format" ] && youtube-dl --restrict-filenames "$url" "$@" --merge-output-format "$format" --recode-video "$format" -o "$dir"/"$vid"   
+}
+
+vmdk() { # yoinked from https://foswiki.org/Support/HowToRunVirtualMachineImageOnKvmQemu
+	qemu-system-x86_64 -enable-kvm -smp 2,sockets=1,cores=2,threads=1 -m 8192 \ 
+	-hda "$1" -display sdl -boot once=c,menu=off  
 }
 
 vtmp() { # youtube video links expire after some time
@@ -329,6 +358,10 @@ ww() {
 
 xb() {
 	xrandr --output DVI-D-0 --brightness "$1" --output HDMI-A-0 --brightness "$1"
+}
+
+youtubeConvert(){ # yoinked from https://gist.github.com/hightemp/11067566
+        ffmpeg -i "$1" -c:v libx264 -crf 18 -preset slow -pix_fmt yuv420p -c:a copy "$2".mkv
 }
 
 yts() {
