@@ -12,12 +12,6 @@ for i in "$@"; do
 done
 echo >> "$script" 				# add line terminator
 
-# old (doesn't quote for spaces): 
-#[ -f "$script" ] && rm "$script"
-#for i in "$@"; do
-#	echo "$i" >> "$script"
-#done
-
 chmod +x "$script"
 #MANGOHUD_CONFIG="" MANGOHUD_DLSYM=1 mangohud \
 xinit "$script" -- :1 -config game.conf
