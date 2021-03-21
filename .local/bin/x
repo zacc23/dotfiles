@@ -2,14 +2,22 @@
 # yoinked from https://wiki.archlinux.org/index.php/Gaming#Starting_games_in_a_separate_X_server
 # xvidtune -show | head -n1
 # doas unshare -n doas -u zacc
-#[ -f "$script" ] && rm "$script"
 script=/tmp/game.sh
-game="$(which "$1")" 
-echo \""$game"\" > "$script"
+game="$(which "$1")" 				# give path for exe 
 shift
+
+echo -n \""$game"\"" " > "$script"		# quote around exe and add space 
 for i in "$@"; do
-	echo -n \""$i"\"" " >> "$script"
+	echo -n \""$i"\"" " >> "$script"	# quote each argument and add space
 done
+echo >> "$script" 				# add line terminator
+
+# old (doesn't quote for spaces): 
+#[ -f "$script" ] && rm "$script"
+#for i in "$@"; do
+#	echo "$i" >> "$script"
+#done
+
 chmod +x "$script"
 #MANGOHUD_CONFIG="" MANGOHUD_DLSYM=1 mangohud \
 xinit "$script" -- :1 -config game.conf
