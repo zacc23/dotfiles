@@ -1,0 +1,16 @@
+#!/bin/sh
+smb_dir=~/win/shared
+vm_dir=~/win
+vm="$vm_dir"/win8.img
+cd=~/boot/windows/8.1/en_windows_embedded_8.1_industry_enterprise_with_update_x64_dvd_6052160.iso
+
+qemu-system-x86_64 -enable-kvm -m 4096 -cpu host,kvm=off \
+-smp 2,sockets=1,cores=2,threads=1 -rtc base=localtime \
+$(: -display sdl ) \
+-drive file="$vm",id=disk,format=raw,if=none \
+-device ide-hd,bus=ide.1,drive=disk \
+-boot order=dc \
+-drive file="$cd",format=raw,id=virtiocd,if=none \
+-device ide-cd,bus=ide.1,$(: drive=virtiocd) \
+-net nic -net user,smb="$smb_dir" \
+"$@"
