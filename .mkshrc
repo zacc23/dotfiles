@@ -12,12 +12,12 @@ alias bluempg='mpg123 -abluealsa -f500'
 alias blueplay='aplay -D bluealsa'
 alias bvol='amixer -D bluealsa sset "$BLUEALSA_DEV"'
 alias cemu='$SRC_DIR/CEmu/gui/qt/CEmu'
-alias cm='curl -s https://wttr.in/moon | head -n23' # | less -FKRSX
+alias cm='curl -s https://wttr.in/moon | head -n23 | less -FKRSX'
 alias cmake='cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release'
 alias cmakerm='xargs rm < install_manifest.txt'
 alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias curl='curl -s --show-error'
-alias cw='curl -s https://v2.wttr.in/phf | head -n42' # | less -FKRSX
+alias cw='curl -s https://v2.wttr.in/phf | head -n42 | less -FKRSX'
 alias deemix='deemix -b flac -p .'
 alias den='dolphin-emu-nogui'
 alias diff='diff --color'
@@ -28,17 +28,20 @@ alias dt='dict -d wn' # dt='dict -d pgw'
 alias dwdiff='dwdiff -3 -c'
 alias feh='feh -R 0' # -B black
 alias fetch='fdm -kv fetch'
+alias fformat='ffprobe -show_format'
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias fl=figlet
-alias ffplay='ffplay -af "aresample=out_channel_layout=stereo" -autoexit -hide_banner -v 8 -stats'
+alias flutter='$SRC_DIR/flutter/bin/flutter config --no-analytics >/dev/null && $SRC_DIR/flutter/bin/flutter'
+alias ffplay='ffplay -autoexit -hide_banner -v 8 -stats -af "aresample=out_channel_layout=stereo"'
+alias ffrear='AUDIODEVICE=snd/0.rear ffplay -autoexit -hide_banner -v 8 -stats'
 alias fxname='basename $(ll /proc/$(xprop _NET_WM_PID | awk "{print \$NF}")/exe | awk "{print \$NF}")'
 alias gdb='gdb -q'
 alias gimp='gimp -s'
 alias hc=HeadsetControl
 #alias killgpg='gpg-connect-agent reloadagent /bye'
 alias la='ls -A'
-alias less='less --mouse'
+alias less='less -F --mouse'
 alias ll='ls -l'
 alias ls='ls --color=auto'
 #alias fw='httpdirfs "https://open.audio" ~/.local/music'
@@ -55,10 +58,12 @@ alias pl='pacmd list-sinks | grep -e "name:" -e "index:" -e "base volume:"'
 alias pm=pulsemixer
 alias pg="$PAGER"
 alias pi='print "scale=10; 4*a(1)" | bc -l'
+alias r='fc -e :'
 alias rec='ffmpeg -video_size 1920x1080 -framerate 60 -f x11grab -i $DISPLAY '
 alias root='root -l'
 alias scrot='scrot %Y-%m-%d-%T-screenshot.png'
 alias sfu=sfeed_update
+alias speedtest='speedtest-cli --simple'
 alias sudo=doas
 alias sx=startx
 alias tb='nc termbin.com 9999'
@@ -122,11 +127,11 @@ decdir() {
 }
 
 doc() {
-	catdoc "$1" | "$PAGER"
+	catdoc "$1" | $PAGER
 }
  
 docx() {
-	docx2txt "$1" - | "$PAGER"
+	docx2txt "$1" - | $PAGER
 }
 
 enc() {
@@ -138,7 +143,7 @@ encdir() {
 }
 
 epub() {
-	epub2txt "$1" | "$PAGER"
+	epub2txt "$1" | $PAGER
 }
 
 ew() { # edit which 
@@ -146,7 +151,11 @@ ew() { # edit which
 }
 
 hex() {
-        strings "$1" | "$PAGER"
+        strings "$1" | $PAGER
+}
+
+hms() { # convert seconds to hours_minutes_seconds (https://stackoverflow.com/a/29269811)
+	date -d@"$1" -u +%H:%M:%S
 }
 
 ips() {
@@ -179,11 +188,11 @@ m4a() {
 }
 
 mad() {
-	lowdown -Tman "$1" | mandoc | "$PAGER"
+	lowdown -Tman "$1" | mandoc | $PAGER
 }
 
 md() { 
-	markdown "$1" | w3m -T text/html | "$PAGER"
+	markdown "$1" | w3m -T text/html | $PAGER
 }
 
 mid() {
@@ -192,7 +201,7 @@ mid() {
 	fluidsynth -i -n -T raw -F- "$SF2" "$song" 2>/dev/null | aucat -i - "$@"
 }
 
-mono() {
+conv_mono() {
 	ffmpeg -i "$1" -ac 1 /tmp/"$1" && mv /tmp/"$1" .
 }
 
@@ -207,7 +216,7 @@ physexec() {
 }
 
 odt() {
-	odt2txt "$1" | "$PAGER"
+	odt2txt "$1" | $PAGER
 }
 
 ogg() {
@@ -223,7 +232,7 @@ opus() {
 }
 
 pod() {
-	pod2mdoc "$1" | mandoc | "$PAGER"
+	pod2mdoc "$1" | mandoc | $PAGER
 }
 
 pw() {
@@ -237,7 +246,7 @@ qemu() {
 }
 
 rst() {
-	rst2man "$1" | mandoc | "$PAGER"
+	rst2man "$1" | mandoc | $PAGER
 }
 
 sfc() {
@@ -249,7 +258,7 @@ sfeed_youtube() {
 }
 
 sfp() { 
-	sfeed_plain ~/.sfeed/feeds/"$1" | "$PAGER" 
+	sfeed_plain ~/.sfeed/feeds/"$1" | $PAGER
 }
 
 shorten() {
