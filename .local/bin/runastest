@@ -1,0 +1,16 @@
+#!/bin/sh
+# requirements:
+# 	$ useradd -m test 
+# 	doas.conf: permit nopass $USER as test 
+
+# optional (copy files over):
+# 	$ usermod -aG test $USER
+#	$ chgrp -R test /home/test
+#	$ chmod -R g+rwX /home/test
+
+xhost si:localuser:test >/dev/null
+	#doas unshare -n \ # unshare -r -n to assume root (-r) and no network (-n)
+	doas -u test env \
+	HOME=/home/test USER=test \
+	USERNAME=test LOGNAME=test \
+	"$@"
