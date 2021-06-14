@@ -1,0 +1,16 @@
+#!/bin/sh
+# requirements:
+# 	$ useradd -m wine
+# 	doas.conf: permit nopass $USER as wine
+
+# optional (copy files over):
+# 	$ usermod -aG wine $USER
+#	$ chgrp -R wine /home/wine
+# 	$ chmod -R g+rwX /home/wine
+
+xhost si:localuser:wine >/dev/null
+	#doas unshare -n \ # unshare -r -n to assume root (-r) and no network (-n)
+	doas -u wine env \
+	HOME=/home/wine USER=wine \
+	USERNAME=wine LOGNAME=wine \
+	wine "$@"
