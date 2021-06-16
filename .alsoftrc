@@ -1,1 +1,6 @@
-drivers = sndio
+[general]
+drivers = alsa
+rt-prio = 0 
+[alsa]
+device = plug:dmix
+capture = plug:dsnoop
