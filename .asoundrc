@@ -1,17 +1,21 @@
-pcm.!default {
-	type asym
-	playback.pcm
-	{
-    		type sndio 
-  	}
-  	capture.pcm
-  	{
-    		type hw
-		card 0
-                device 0
-  	}
+# https://www.alsa-project.org/main/index.php/Asoundrc#dmix
+# https://wiki.archlinux.org/title/Advanced_Linux_Sound_Architecture/Troubleshooting#Simultaneous_playback_problems
+
+pcm.dmixer {
+    type dmix
+    slave {
+	pcm "hw:1,0"
+	period_time 0
+        period_size 1024
+        buffer_size 4096
+        rate 44100
+    }
+    ipc_key 1024
+    ipc_key_add_uid 0
+    ipc_perm 0660
 }
 
-defaults.bluealsa.service "org.bluealsa"
-defaults.bluealsa.device "E0:EB:40:2F:ED:39"
-defaults.bluealsa.profile "a2dp"
+pcm.!default {
+    type plug
+    slave.pcm "dmix"
+}
